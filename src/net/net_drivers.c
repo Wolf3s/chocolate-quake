@@ -41,6 +41,7 @@ net_driver_t net_drivers[MAX_NET_DRIVERS] = {
         Loop_Close,
         Loop_Shutdown
     },
+#ifndef __PS2__ // No net on ps2
     {
         "Datagram",
         false,
@@ -57,5 +58,10 @@ net_driver_t net_drivers[MAX_NET_DRIVERS] = {
         Datagram_Close,
         Datagram_Shutdown
     },
+#endif
 };
+#ifdef __PS2__
+int net_numdrivers = 1;
+#else
 int net_numdrivers = 2;
+#endif

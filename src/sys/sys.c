@@ -294,9 +294,11 @@ static void Sys_SigInit(void) {
 
 //=============================================================================
 
-
+#ifdef __PS2__
+#define DEFAULT_MEMORY (24 * 1024 * 1024)
+#else
 #define DEFAULT_MEMORY (256 * 1024 * 1024)
-
+#endif
 static quakeparms_t* Sys_InitParms(int argc, char** argv) {
     static quakeparms_t parms;
 

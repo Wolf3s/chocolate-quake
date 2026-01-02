@@ -35,8 +35,11 @@ static qboolean vid_initialized = false;
 
 static byte backingbuf[48 * 24];
 
+#ifdef __PS2__
+const Uint32 pixel_format = SDL_PIXELFORMAT_ABGR1555;
+#else
 const Uint32 pixel_format = SDL_PIXELFORMAT_ARGB8888;
-
+#endif
 
 void VID_Init(const byte* palette) {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
