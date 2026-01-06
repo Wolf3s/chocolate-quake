@@ -76,8 +76,11 @@ byte* host_basepal;
 byte* host_colormap;
 
 cvar_t host_framerate = {"host_framerate", "0"}; // set for slow motion
+#ifdef __PS2__
+cvar_t host_speeds = {"host_speeds", "1"};       // set for running times
+#else
 cvar_t host_speeds = {"host_speeds", "0"};       // set for running times
-
+#endif
 cvar_t sys_ticrate = {"sys_ticrate", "0.05"};
 cvar_t serverprofile = {"serverprofile", "0"};
 
