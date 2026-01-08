@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1996-1997 Id Software, Inc.
- * Copyright (C) 2025 Henrique Barateli <henriquejb194@gmail.com>
+ * Copyright (C) Henrique Barateli, <henriquejb194@gmail.com>, et al.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -218,7 +218,7 @@ static void S_WAV_CodecCloseStream(snd_stream_t* stream) {
 }
 
 static int S_WAV_CodecRewindStream(snd_stream_t* stream) {
-    FS_rewind(&stream->fh);
+    Q_rewind(&stream->fh);
     return 0;
 }
 
