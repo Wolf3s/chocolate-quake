@@ -64,8 +64,10 @@ static void VID_CreateRenderer(void) {
     // Blank out the full screen area in case there is any junk in
     // the borders that won't otherwise be overwritten.
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+#ifndef __PS2__
     SDL_RenderClear(renderer);
     SDL_RenderPresent(renderer);
+#endif
 }
 
 static void VID_CreateWindow(void) {
