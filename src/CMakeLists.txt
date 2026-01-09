@@ -42,16 +42,27 @@ if(WIN32)
 
     configure_file(${RC_INPUT_FILE} ${RC_OUTPUT_FILE})
     add_executable(${PACKAGE_TARNAME} WIN32 main.c ${RC_OUTPUT_FILE})
+elseif(PS2)
+    add_executable(${PACKAGE_TARNAME}.elf main.c)
 else()
     add_executable(${PACKAGE_TARNAME} main.c)
 endif()
 
+if(PS2)
+target_include_directories(${PACKAGE_TARNAME}.elf PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_BINARY_DIR}
+)
+
+target_link_libraries(${PACKAGE_TARNAME}.elf ${LIBS})
+else()
 target_include_directories(${PACKAGE_TARNAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_BINARY_DIR}
 )
 
 target_link_libraries(${PACKAGE_TARNAME} ${LIBS})
+endif()
 if(WIN32)
     target_link_libraries(${PACKAGE_TARNAME} ws2_32)
 endif()
