@@ -22,3 +22,9 @@ target_link_libraries(input PRIVATE
     sys
     video
 )
+
+if(PS2)
+    target_compile_options(input PRIVATE
+        -Wno-incompatible-pointer-types
+    )
+endif()

@@ -59,7 +59,7 @@ net_driver_t net_drivers[MAX_NET_DRIVERS] = {
     },
 };
 #ifdef __PS2__
-int net_numdrivers = 1;
+i32 net_numdrivers = 1;
 #else
-int net_numdrivers = 2;
+i32 net_numdrivers = 2;
 #endif

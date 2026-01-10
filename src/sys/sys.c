@@ -299,7 +299,8 @@ static void Sys_SigInit(void) {
 #else
 #define DEFAULT_MEMORY (256 * 1024 * 1024)
 #endif
-static quakeparms_t* Sys_InitParms(int argc, char** argv) {
+
+static quakeparms_t* Sys_InitParms(i32 argc, char** argv) {
     static quakeparms_t parms;
 
     parms.memsize = DEFAULT_MEMORY;
