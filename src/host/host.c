@@ -668,8 +668,13 @@ void _Host_Frame(float time) {
         time3 = Sys_FloatTime();
         pass2 = (time2 - time1) * 1000;
         pass3 = (time3 - time2) * 1000;
+#ifdef __PS2__
+        Sys_Printf("%3i tot %3i server %3i gfx %3i snd\n",
+                   pass1 + pass2 + pass3, pass1, pass2, pass3);
+#else
         Con_Printf("%3i tot %3i server %3i gfx %3i snd\n",
                    pass1 + pass2 + pass3, pass1, pass2, pass3);
+#endif
     }
 
     host_framecount++;
