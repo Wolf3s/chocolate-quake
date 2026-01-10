@@ -146,7 +146,8 @@ jobs:
           git clone https://github.com/libsdl-org/SDL.git
           cd SDL
           git checkout SDL2
-          git checkout 3fd0b46
+          git checkout 7b28fb2
+
 
           cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=$PS2DEV/share/ps2dev.cmake -DCMAKE_INSTALL_PREFIX=$PS2SDK/ports
           cmake --build build
@@ -163,4 +164,4 @@ jobs:
         uses: actions/upload-artifact@v5
         with:
           name: chocolate-quake-ps2
-          path: build/chocolate-quake.elf
+          path: build/src/chocolate-quake.elf
