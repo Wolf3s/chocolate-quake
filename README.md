@@ -82,7 +82,7 @@ For a debug build:
 > cmake --build --preset debug
 
 # PS2
-On PS2 you need to install ps2sdk using [ps2dev](https://github.com/ps2dev/ps2dev) then build using:
+On PS2 you need to install ps2sdk using [ps2dev](https://github.com/ps2dev/ps2dev) and [SDL2 upstreamed](https://github.com/libsdl-org/SDL) then build using:
 > cmake -S . -Bbuild -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=$PS2DEV/share/ps2dev.cmake
 >
 > cmake --build build
