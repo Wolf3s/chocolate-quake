@@ -33,7 +33,7 @@ static SDL_Renderer* renderer = NULL;
 // The intermediate texture that we load the RGBA buffer to.
 static SDL_Texture* texture = NULL;
 
-extern const Uint32 pixel_format;
+extern const u32 pixel_format;
 
 static cvar_t _windowed_mouse = {"_windowed_mouse", "0", true};
 static qboolean windowed_mouse;
@@ -48,12 +48,12 @@ INITIALIZATION AND SHUTDOWN
 */
 
 static void VID_CreateRenderer(void) {
-    int index = -1;
+    i32 index = -1;
 #ifdef __PS2__
 	SDL_SetHint(SDL_HINT_PS2_GS_WIDTH, "640");
 	SDL_SetHint(SDL_HINT_PS2_GS_HEIGHT, "480");   
 #endif
-    Uint32 flags = SDL_RENDERER_TARGETTEXTURE;
+    u32 flags = SDL_RENDERER_TARGETTEXTURE;
     renderer = SDL_CreateRenderer(window, index, flags);
 
     // Important: Set the "logical size" of the rendering context. At the same
@@ -71,11 +71,11 @@ static void VID_CreateRenderer(void) {
 }
 
 static void VID_CreateWindow(void) {
-    int x = SDL_WINDOWPOS_CENTERED;
-    int y = SDL_WINDOWPOS_CENTERED;
-    int w = 0;
-    int h = 0;
-    Uint32 flags = SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_FULLSCREEN_DESKTOP;
+    i32 x = SDL_WINDOWPOS_CENTERED;
+    i32 y = SDL_WINDOWPOS_CENTERED;
+    i32 w = 0;
+    i32 h = 0;
+    u32 flags = SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_FULLSCREEN_DESKTOP;
     window = SDL_CreateWindow(PACKAGE_STRING, x, y, w, h, flags);
     if (window == NULL) {
         const char* error = SDL_GetError();
@@ -122,8 +122,8 @@ MOUSE HANDLING
 */
 
 static void VID_CenterMouse(void) {
-    int x = (int) vid.width / 2;
-    int y = (int) vid.height / 2;
+    i32 x = (i32) vid.width / 2;
+    i32 y = (i32) vid.height / 2;
     SDL_WarpMouseInWindow(window, x, y);
 }
 
@@ -139,7 +139,7 @@ static void VID_GrabMouse(void) {
 }
 
 qboolean VID_WindowedMouse(void) {
-    return (int) _windowed_mouse.value != 0;
+    return (i32) _windowed_mouse.value != 0;
 }
 
 void VID_ToggleMouseGrab(void) {
@@ -164,10 +164,10 @@ VIDEO MODE CHANGE
 */
 
 static void VID_SetWindowed(void) {
-    int w = (int) vid.width;
-    int h = (int) vid.height;
-    int x = SDL_WINDOWPOS_CENTERED;
-    int y = SDL_WINDOWPOS_CENTERED;
+    i32 w = (i32) vid.width;
+    i32 h = (i32) vid.height;
+    i32 x = SDL_WINDOWPOS_CENTERED;
+    i32 y = SDL_WINDOWPOS_CENTERED;
     SDL_SetWindowFullscreen(window, 0);
     SDL_SetWindowSize(window, w, h);
     SDL_SetWindowPosition(window, x, y);
@@ -187,9 +187,9 @@ static void VID_SetFullscreen(void) {
 // Create the intermediate texture that the RGBA surface gets loaded into.
 //
 static void VID_AllocTexture(void) {
-    int access = SDL_TEXTUREACCESS_STREAMING;
-    int w = (int) vid.width;
-    int h = (int) vid.height;
+    i32 access = SDL_TEXTUREACCESS_STREAMING;
+    i32 w = (i32) vid.width;
+    i32 h = (i32) vid.height;
     texture = SDL_CreateTexture(renderer, pixel_format, access, w, h);
 }
 
