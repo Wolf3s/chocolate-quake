@@ -23,19 +23,8 @@
 #include "quakedef.h"
 #include "net.h"
 
-
-void Q_memset(void* dest, int fill, int count) {
-    if ((((intptr_t) dest | count) & 3) != 0) {
-        for (int i = 0; i < count; i++) {
-            ((byte*) dest)[i] = (byte) fill;
-        }
-        return;
-    }
-    count >>= 2;
-    fill = fill | (fill << 8) | (fill << 16) | (fill << 24);
-    for (int i = 0; i < count; i++) {
-        ((int*) dest)[i] = fill;
-    }
+void* Q_memmove(void* dest, const void* src, size_t count) {
+    return SDL_memmove(dest, src, count);
 }
 
 void Q_memcpy(void* dest, void* src, int count) {
@@ -51,14 +40,12 @@ void Q_memcpy(void* dest, void* src, int count) {
     }
 }
 
-int Q_memcmp(void* m1, void* m2, int count) {
-    while (count) {
-        count--;
-        if (((byte*) m1)[count] != ((byte*) m2)[count]) {
-            return -1;
-        }
-    }
-    return 0;
+void Q_memcpy(void* dest, void* src, size_t count) {
+    SDL_memcpy(dest, src, count);
+}
+
+i32 Q_memcmp(void* m1, void* m2, size_t count) {
+    return SDL_memcmp(m1, m2, count);
 }
 
 void Q_strcpy(char* dest, const char* src) {
