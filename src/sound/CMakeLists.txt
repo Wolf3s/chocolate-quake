@@ -43,10 +43,5 @@ endif()
 
 target_include_directories(sound PRIVATE ${CMAKE_BINARY_DIR} "../")
 target_include_directories(sound PUBLIC "./include")
-if(PS2)
-    target_compile_options(sound PRIVATE
-        -Wno-incompatible-pointer-types
-    )
-endif()
 target_link_libraries(sound PUBLIC common console mathlib memory)
 target_link_libraries(sound PRIVATE ${LIBS} client cmd host model sys)

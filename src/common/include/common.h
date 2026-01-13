@@ -45,6 +45,14 @@
 
 typedef Uint8 byte;
 
+#ifdef __PS2__
+#include <tamtypes.h>
+
+typedef s8 i8;
+typedef s16 i16;
+typedef s32 i32;
+typedef s64 i64;
+#else
 typedef Uint8 u8;
 typedef Uint16 u16;
 typedef Uint32 u32;
@@ -54,6 +62,7 @@ typedef Sint8 i8;
 typedef Sint16 i16;
 typedef Sint32 i32;
 typedef Sint64 i64;
+#endif
 
 #undef true
 #undef false

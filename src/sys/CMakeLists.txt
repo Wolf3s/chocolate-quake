@@ -11,9 +11,3 @@ target_link_libraries(sys PRIVATE
     input
     menu
 )
-
-if(PS2)
-    target_compile_options(sys PRIVATE
-        -Wno-incompatible-pointer-types
-    )
-endif()
