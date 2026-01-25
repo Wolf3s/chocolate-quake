@@ -49,10 +49,6 @@ INITIALIZATION AND SHUTDOWN
 
 static void VID_CreateRenderer(void) {
     i32 index = -1;
-#ifdef __PS2__
-	SDL_SetHint(SDL_HINT_PS2_GS_WIDTH, "640");
-	SDL_SetHint(SDL_HINT_PS2_GS_HEIGHT, "480");   
-#endif
     u32 flags = SDL_RENDERER_TARGETTEXTURE;
     renderer = SDL_CreateRenderer(window, index, flags);
 
