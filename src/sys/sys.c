@@ -310,7 +310,11 @@ static char* Sys_GetDefaultBaseDir(void) {
     if (base_dir[0]) {
         return base_dir;
     }
+#ifdef __PS2__
+    char* path = SDL_GetBasePath();
+#else
     char* path = SDL_GetPrefPath("", PACKAGE_TARNAME);
+#endif
     Q_strncpy(base_dir, path, MAX_OSPATH);
     SDL_free(path);
     return base_dir;
