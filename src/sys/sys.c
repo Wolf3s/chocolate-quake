@@ -22,6 +22,7 @@
 #include "sys.h"
 #include "client.h"
 #include "cmd.h"
+#include "config.h"
 #include "end_screen.h"
 #include "input.h"
 #include "keys.h"
@@ -301,12 +302,27 @@ static void Sys_SigInit(void) {
 #define DEFAULT_MEMORY (256 * 1024 * 1024)
 #endif
 
+static char* Sys_GetDefaultBaseDir(void) {
+#ifdef _WIN32
+    return ".";
+#else
+    static char base_dir[MAX_OSPATH] = {0};
+    if (base_dir[0]) {
+        return base_dir;
+    }
+    char* path = SDL_GetPrefPath("", PACKAGE_TARNAME);
+    Q_strncpy(base_dir, path, MAX_OSPATH);
+    SDL_free(path);
+    return base_dir;
+#endif
+}
+
 static quakeparms_t* Sys_InitParms(i32 argc, char** argv) {
     static quakeparms_t parms;
 
     parms.memsize = DEFAULT_MEMORY;
     parms.membase = Q_malloc(parms.memsize);
-    parms.basedir = ".";
+    parms.basedir = Sys_GetDefaultBaseDir();
 
     COM_InitArgv(argc, argv);
     parms.argc = com_argc;
