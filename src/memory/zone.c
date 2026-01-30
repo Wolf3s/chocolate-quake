@@ -27,11 +27,7 @@
 #include <SDL_stdinc.h>
 #include <string.h>
 
-#ifdef __PS2__
-#define DYNAMIC_SIZE (1 * 1024 * 1024)
-#else
 #define DYNAMIC_SIZE (4 * 1024 * 1024)
-#endif
 
 #define ZONEID      0x1d4a11
 #define MINFRAGMENT 64
