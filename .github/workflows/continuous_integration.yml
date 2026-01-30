@@ -146,7 +146,7 @@ jobs:
           git clone https://github.com/libsdl-org/SDL.git
           cd SDL
           git checkout SDL2
-          git checkout f383330
+          git checkout 99eca2c
 
           cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=$PS2DEV/share/ps2dev.cmake -DCMAKE_INSTALL_PREFIX=$PS2SDK/ports
           cmake --build build
