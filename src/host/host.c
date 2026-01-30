@@ -76,11 +76,7 @@ byte* host_basepal;
 byte* host_colormap;
 
 cvar_t host_framerate = {"host_framerate", "0"}; // set for slow motion
-#ifdef __PS2__
-cvar_t host_speeds = {"host_speeds", "1"};       // set for running times
-#else
 cvar_t host_speeds = {"host_speeds", "0"};       // set for running times
-#endif
 cvar_t sys_ticrate = {"sys_ticrate", "0.05"};
 cvar_t serverprofile = {"serverprofile", "0"};
 
@@ -669,13 +665,8 @@ void _Host_Frame(float time) {
         time3 = Sys_FloatTime();
         pass2 = (time2 - time1) * 1000;
         pass3 = (time3 - time2) * 1000;
-#ifdef __PS2__
-        Sys_Printf("%3i tot %3i server %3i gfx %3i snd\n",
-                   pass1 + pass2 + pass3, pass1, pass2, pass3);
-#else
         Con_Printf("%3i tot %3i server %3i gfx %3i snd\n",
                    pass1 + pass2 + pass3, pass1, pass2, pass3);
-#endif
     }
 
     host_framecount++;
