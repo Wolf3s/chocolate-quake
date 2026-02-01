@@ -46,6 +46,9 @@ enum {
     m_net,
     m_options,
     m_video,
+#ifdef __PS2__
+    m_modmenu,
+#endif
     m_keys,
     m_help,
     m_quit,
@@ -67,6 +70,9 @@ void M_Menu_Net_f(void);
 void M_Menu_Options_f(void);
 void M_Menu_Keys_f(void);
 void M_Menu_Video_f(void);
+#ifdef __PS2__
+void M_Menu_ModMenu_f(void);
+#endif
 void M_Menu_Help_f(void);
 void M_Menu_Quit_f(void);
 void M_Menu_SerialConfig_f(void);
@@ -84,6 +90,9 @@ void M_MultiPlayer_Draw(void);
 void M_Setup_Draw(void);
 void M_Net_Draw(void);
 void M_Options_Draw(void);
+#ifdef __PS2__
+void M_ModMenu_Draw(void);
+#endif
 void M_Keys_Draw(void);
 void M_Video_Draw(void);
 void M_Help_Draw(void);
@@ -105,6 +114,9 @@ void M_Net_Key(i32 key);
 void M_Options_Key(i32 key);
 void M_Keys_Key(i32 key);
 void M_Video_Key(i32 key);
+#ifdef __PS2__
+void M_ModMenu_Key(i32 key);
+#endif
 void M_Help_Key(i32 key);
 void M_Quit_Key(i32 key);
 void M_SerialConfig_Key(i32 key);
@@ -1008,7 +1020,11 @@ again:
 //=============================================================================
 /* OPTIONS MENU */
 
+#ifdef __PS2__
+#define OPTIONS_ITEMS 15
+#else
 #define OPTIONS_ITEMS 14
+#endif
 
 #define SLIDER_RANGE 10
 
@@ -1018,9 +1034,15 @@ void M_Menu_Options_f(void) {
     key_dest = key_menu;
     m_state = m_options;
     m_entersound = true;
+#ifdef __PS2__
+    if (options_cursor == 14 && VID_IsFullscreenMode()) {
+        options_cursor = 0;
+    }
+#else
     if (options_cursor == 13 && VID_IsFullscreenMode()) {
         options_cursor = 0;
     }
+#endif
 }
 
 
@@ -1173,6 +1195,10 @@ void M_Options_Draw(void) {
         M_DrawCheckbox(220, 136, VID_WindowedMouse());
     }
 
+#ifdef __PS2__
+    M_Print(16, 144, "         Load Mods");
+#endif
+
     // cursor
     M_DrawCharacter(200, 32 + options_cursor * 8, 12 + ((i32) (realtime * 4) & 1));
 }
@@ -1202,6 +1228,11 @@ void M_Options_Key(i32 k) {
                 case 12:
                     M_Menu_Video_f();
                     break;
+#ifdef __PS2__
+                case 14:
+                    M_Menu_ModMenu_f();
+                    break;
+#endif
                 default:
                     M_AdjustSliders(1);
                     break;
@@ -1408,6 +1439,122 @@ void M_Keys_Key(i32 k) {
             break;
     }
 }
+
+#ifdef __PS2__
+//=============================================================================
+/* VIDEO MENU */
+
+#include <sys/stat.h>
+#include <dirent.h>
+
+static char **mod_list = NULL;
+static int mod_count = 0;
+static int mod_cursor = 0;
+
+static void Mods_Clear(void)
+{
+    for (int i = 0; i < mod_count; i++)
+        Z_Free(mod_list[i]);
+
+    Z_Free(mod_list);
+    mod_list = NULL;
+    mod_count = 0;
+}
+
+static void ScanMods()
+{
+    struct dirent *modDirent;
+    DIR *modDir; 
+    struct stat st;
+    char path[256];
+    char modpath[256];
+    char *baseDir = SDL_GetBasePath();
+
+    snprintf(path, sizeof(path), "%s/mods", baseDir);
+
+    modDir = opendir(path);
+    if(!modDir)
+        return;
+
+    while ((modDirent = readdir(modDir)) != NULL)
+    {
+        if (modDirent->d_name[0] == '.')
+            continue;
+
+        snprintf(modpath, sizeof(modpath),
+                 "%s/mods/%s", baseDir, modDirent->d_name);
+
+        if (stat(modpath, &st) == 0 && S_ISDIR(st.st_mode))
+        {
+            mod_list = Z_Realloc(mod_list,
+                                 (mod_count + 1) * sizeof(char*));
+
+            mod_list[mod_count] =
+                Z_Malloc(strlen(modDirent->d_name) + 1);
+
+            strcpy(mod_list[mod_count], modDirent->d_name);
+            mod_count++;
+        }
+
+    }
+}
+
+void M_Menu_ModMenu_f(void) {
+    char *baseDir = SDL_GetBasePath();
+    key_dest = key_menu;
+    m_state = m_modmenu;
+    m_entersound = true;
+    mkdir(va("%s/mods", baseDir), 0777);
+    ScanMods();  
+    SDL_free(baseDir);
+}
+
+void M_ModMenu_Draw(void) {
+
+    M_DrawTransPic(16, 4, Draw_CachePic("gfx/qplaque.lmp"));
+
+    M_Print(8 * 8, 32, "Select Mod");
+
+    if (mod_count == 0) 
+    { 
+        M_Print(10 * 8, 60, "No mods found"); 
+        return; 
+    } 
+    for (int i = 0; i < mod_count; i++) 
+    { 
+        M_Print(8 * 8, 60 + i * 8, mod_list[i]); 
+    } 
+    M_DrawCharacter(6 * 8, 60 + mod_cursor * 8, 12 + ((int)(realtime * 4) & 1)); 
+
+}
+
+void M_ModMenu_Key(i32 key)
+{
+    switch (key)
+    {
+    case K_UPARROW:
+        if (mod_cursor > 0)
+            mod_cursor--;
+        break;
+
+    case K_DOWNARROW:
+        if (mod_cursor < mod_count - 1)
+            mod_cursor++;
+        break;
+
+    case K_ENTER:
+    case K_ABUTTON:
+        Cbuf_AddText(va("game mods/%s\n", mod_list[mod_cursor]));
+        break;
+
+    case K_ESCAPE:
+    case K_BBUTTON:
+        Mods_Clear();   
+        M_Menu_Main_f();
+        break;
+    }
+}
+#endif
 
 //=============================================================================
 /* VIDEO MENU */
@@ -2815,6 +2962,9 @@ void M_Init(void) {
     Cmd_AddCommand("menu_options", M_Menu_Options_f);
     Cmd_AddCommand("menu_keys", M_Menu_Keys_f);
     Cmd_AddCommand("menu_video", M_Menu_Video_f);
+#ifdef __PS2__
+    Cmd_AddCommand("menu_video", M_Menu_ModMenu_f);
+#endif
     Cmd_AddCommand("help", M_Menu_Help_f);
     Cmd_AddCommand("menu_quit", M_Menu_Quit_f);
 }
@@ -2873,6 +3023,11 @@ void M_Draw(void) {
         case m_video:
             M_Video_Draw();
             break;
+#ifdef __PS2__
+        case m_modmenu:
+            M_ModMenu_Draw();
+            break;
+#endif
         case m_help:
             M_Help_Draw();
             break;
@@ -2944,6 +3099,11 @@ void M_Keydown(i32 key) {
         case m_video:
             M_Video_Key(key);
             return;
+#ifdef __PS2__
+        case m_modmenu:
+            M_ModMenu_Key(key);
+            return;
+#endif
         case m_help:
             M_Help_Key(key);
             return;
