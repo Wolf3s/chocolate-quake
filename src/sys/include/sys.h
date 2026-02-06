@@ -48,9 +48,9 @@ void Sys_FileClose(i32 handle);
 
 void Sys_FileSeek(i32 handle, i32 position);
 
-i32 Sys_FileRead(i32 handle, void* dest, i32 count);
+size_t Sys_FileRead(i32 handle, void* dest, i32 count);
 
-i32 Sys_FileWrite(i32 handle, void* data, i32 count);
+size_t Sys_FileWrite(i32 handle, void* data, i32 count);
 
 i32 Sys_FileTime(char* path);
 

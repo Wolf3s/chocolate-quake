@@ -139,7 +139,7 @@ snd_stream_t* S_CodecUtilOpen(const char* filename, snd_codec_t* codec,
     FILE* handle;
 
     /* Try to open the file */
-    i64 length = COM_FindMusicTrack(filename, &handle);
+    long length = COM_FindMusicTrack(filename, &handle);
     if (length == -1) {
         Con_DPrintf("Couldn't open %s\n", filename);
         return NULL;

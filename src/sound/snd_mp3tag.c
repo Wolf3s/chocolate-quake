@@ -26,7 +26,7 @@
 
 #define IS_DIGIT(c) (c >= '0' && c <= '9')
 
-static qboolean MP3_IsId3v1(const byte* data, i64 length) {
+static qboolean MP3_IsId3v1(const byte* data, long length) {
     // http://id3.org/ID3v1 :  3 bytes "TAG" identifier and 125 bytes tag data
     if (length < 128 || Q_memcmp(data, "TAG", 3) != 0) {
         return false;
@@ -53,9 +53,9 @@ static qboolean MP3_IsId3v2(const byte* data, size_t length) {
     return true;
 }
 
-static i64 MP3_GetId3v2Len(const byte* data, i64 length) {
+static long MP3_GetId3v2Len(const byte* data, long length) {
     // size is a 'synchsafe' integer (see above)
-    i64 size = (data[6] << 21) + (data[7] << 14) + (data[8] << 7) + data[9];
+    long size = (data[6] << 21) + (data[7] << 14) + (data[8] << 7) + data[9];
     size += 10; // header size
     // ID3v2 header[5] is flags (bits 4-7 only, 0-3 are zero).
     // bit 4 set: footer is present (a copy of the header but with "3DI" as ident.)
@@ -89,9 +89,10 @@ static qboolean MP3_IsApeTag(const byte* data, size_t length) {
     return true;
 }
 
-static i64 MP3_GetApeLen(const byte* data) {
-    u32 flags, version;
-    i64 size = (data[15] << 24) | (data[14] << 16) | (data[13] << 8) | data[12];
+static long MP3_GetApeLen(const byte* data) {
+    u32 flags;
+    u32 version;
+    long size = (data[15] << 24) | (data[14] << 16) | (data[13] << 8) | data[12];
     version = (u32) ((data[11] << 24) | (data[10] << 16) | (data[9] << 8) | data[8]);
     flags = (u32) ((data[23] << 24) | (data[22] << 16) | (data[21] << 8) | data[20]);
     if (version == 2000U && (flags & (1U << 31))) {
@@ -100,7 +101,7 @@ static i64 MP3_GetApeLen(const byte* data) {
     return size;
 }
 
-static i32 MP3_IsLyrics3Tag(const byte* data, i64 length) {
+static i32 MP3_IsLyrics3Tag(const byte* data, long length) {
     // http://id3.org/Lyrics3
     // http://id3.org/Lyrics3v2
     if (length < 15) {
@@ -115,9 +116,10 @@ static i32 MP3_IsLyrics3Tag(const byte* data, i64 length) {
     return 0;
 }
 
-static i64 MP3_GetLyrics3v1Len(snd_stream_t* stream) {
+static long MP3_GetLyrics3v1Len(snd_stream_t* stream) {
     const char* p;
-    i64 i, len;
+    long i;
+    long len;
     char buf[5104];
     // Needs manual search:  http://id3.org/Lyrics3
     if (stream->fh.length < 20) {
@@ -125,7 +127,8 @@ static i64 MP3_GetLyrics3v1Len(snd_stream_t* stream) {
     }
     len = (stream->fh.length > 5109) ? 5109 : stream->fh.length;
     Q_fseek(&stream->fh, -len, SEEK_END);
-    Q_fread(buf, 1, (len -= 9), &stream->fh); // exclude footer
+    len -= 9;
+    Q_fread(buf, 1, len, &stream->fh); // exclude footer
     // strstr() won't work here.
     for (i = len - 11, p = buf; i >= 0; --i, ++p) {
         if (Q_memcmp(p, "LYRICSBEGIN", 11) == 0) {
@@ -135,10 +138,10 @@ static i64 MP3_GetLyrics3v1Len(snd_stream_t* stream) {
     if (i < 0) {
         return -1;
     }
-    return len - (p - buf) + 9; // footer
+    return (long) (len - (p - buf) + 9); // footer
 }
 
-static i64 MP3_GetLyrics3v2Len(const byte* data, i64 length) {
+static long MP3_GetLyrics3v2Len(const byte* data, long length) {
     // 6 bytes before the end marker is size in decimal format -
     // does not include the 9 bytes end marker and size field.
     if (length != 6) {
@@ -147,7 +150,7 @@ static i64 MP3_GetLyrics3v2Len(const byte* data, i64 length) {
     return Q_strtol((const char*) data, NULL, 10) + 15;
 }
 
-static qboolean MP3_VerifyLyrics3v2(const byte* data, i64 length) {
+static qboolean MP3_VerifyLyrics3v2(const byte* data, long length) {
     if (length < 11) {
         return false;
     }
@@ -157,7 +160,7 @@ static qboolean MP3_VerifyLyrics3v2(const byte* data, i64 length) {
     return false;
 }
 
-static qboolean Mp3_IsMusicMatch(const byte* data, i64 length) {
+static qboolean Mp3_IsMusicMatch(const byte* data, long length) {
     /* From docs/musicmatch.txt in id3lib: https://sourceforge.net/projects/id3lib/
      Overall tag structure:
 
@@ -202,13 +205,15 @@ static qboolean Mp3_IsMusicMatch(const byte* data, i64 length) {
     return true;
 }
 
-static i64 MP3_GetMusicMatchLen(snd_stream_t* stream) {
+static long MP3_GetMusicMatchLen(snd_stream_t* stream) {
     const i32 metasizes[4] = {7868, 7936, 8004, 8132};
-    const byte syncstr[10] = {'1', '8', '2', '7', '3',
-                                       '6', '4', '5', 0,   0};
+    const byte syncstr[10] = {'1', '8', '2', '7', '3', '6', '4', '5', 0,   0};
     byte buf[256];
-    i32 i, j, imgext_ofs, version_ofs;
-    i64 len;
+    i32 i;
+    i32 j;
+    i32 imgext_ofs;
+    i32 version_ofs;
+    long len = 0;
 
     Q_fseek(&stream->fh, -68, SEEK_END);
     Q_fread(buf, 1, 20, &stream->fh);
@@ -313,7 +318,7 @@ static i32 MP3_ProbeId3v1(snd_stream_t* stream, byte* buf, i32 atend) {
 }
 
 static i32 MP3_ProbeMMTag(snd_stream_t* stream, byte* buf) {
-    i64 len;
+    long len;
     if (stream->fh.length >= 68) {
         Q_fseek(&stream->fh, -48, SEEK_END);
         if (Q_fread(buf, 1, 48, &stream->fh) != 48) {
@@ -336,7 +341,7 @@ static i32 MP3_ProbeMMTag(snd_stream_t* stream, byte* buf) {
 }
 
 static i32 MP3_ProbeApeTag(snd_stream_t* stream, byte* buf) {
-    i64 len;
+    long len;
     if (stream->fh.length >= 32) {
         Q_fseek(&stream->fh, -32, SEEK_END);
         if (Q_fread(buf, 1, 32, &stream->fh) != 32) {
@@ -356,7 +361,7 @@ static i32 MP3_ProbeApeTag(snd_stream_t* stream, byte* buf) {
 }
 
 static i32 MP3_ProbeLyrics3(snd_stream_t* stream, byte* buf) {
-    i64 len;
+    long len;
     if (stream->fh.length >= 15) {
         Q_fseek(&stream->fh, -15, SEEK_END);
         if (Q_fread(buf, 1, 15, &stream->fh) != 15) {
@@ -396,13 +401,15 @@ static i32 MP3_ProbeLyrics3(snd_stream_t* stream, byte* buf) {
 
 i32 MP3_SkipTags(snd_stream_t* stream) {
     byte buf[128];
-    i64 len;
+    long len;
     size_t readsize;
-    i32 c_ape, c_lyr, c_mm;
+    i32 c_ape;
+    i32 c_lyr;
+    i32 c_mm;
     i32 rc = -1;
     // Failsafe
-    i64 oldlength = stream->fh.length;
-    i64 oldstart = stream->fh.start;
+    long oldlength = stream->fh.length;
+    long oldstart = stream->fh.start;
 
     // MP3 standard has no metadata format, so everyone invented
     // their own thing, even with extensions, until ID3v2 became

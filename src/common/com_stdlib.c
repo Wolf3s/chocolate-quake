@@ -33,10 +33,10 @@ void* Q_calloc(size_t num, size_t size) {
 }
 
 void Q_free(void* ptr) {
-    return SDL_free(ptr);
+    SDL_free(ptr);
 }
 
-i64 Q_strtol(const char* str, char** str_end, i32 base) {
+long Q_strtol(const char* str, char** str_end, int base) {
     return SDL_strtol(str, str_end, base);
 }
 

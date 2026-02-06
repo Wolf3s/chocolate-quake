@@ -27,28 +27,32 @@
 #define OV_EXCLUDE_STATIC_CALLBACKS
 #include <vorbis/vorbisfile.h>
 
-/* Vorbis codec can return the samples in a number of different
- * formats, we use the standard signed short format. */
+// Vorbis codec can return the samples in a number of different
+// formats, we use the standard signed short format.
 #define VORBIS_SAMPLEBITS  16
 #define VORBIS_SAMPLEWIDTH 2
 #define VORBIS_SIGNED_DATA 1
 
-/* CALLBACK FUNCTIONS: */
+// CALLBACK FUNCTIONS:
 
-static i32 ovc_fclose(void* f) {
-    return 0; /* we fclose() elsewhere. */
+static int ovc_fclose(void* f) {
+    // We fclose() elsewhere.
+    return 0;
 }
 
-static i32 ovc_fseek(void* f, ogg_int64_t off, i32 whence) {
-    if (f == NULL)
+static int ovc_fseek(void* f, ogg_int64_t off, int whence) {
+    if (f == NULL) {
         return (-1);
-    return Q_fseek(f, off, whence);
+    }
+    return Q_fseek(f, (long) off, whence);
 }
 
 static ov_callbacks ovc_qfs = {
-    (size_t(*)(void*, size_t, size_t, void*)) Q_fread,
-    (i32 (*)(void*, ogg_int64_t, int)) ovc_fseek, (i32 (*)(void*)) ovc_fclose,
-    (long (*)(void*)) Q_ftell};
+    .read_func = (size_t (*)(void*, size_t, size_t, void*)) Q_fread,
+    .seek_func = ovc_fseek,
+    .close_func = ovc_fclose,
+    .tell_func = (long (*)(void*)) Q_ftell,
+};
 
 static qboolean S_VORBIS_CodecInitialize(void) {
     return true;
@@ -60,8 +64,8 @@ static void S_VORBIS_CodecShutdown(void) {
 static qboolean S_VORBIS_CodecOpenStream(snd_stream_t* stream) {
     OggVorbis_File* ovFile;
     vorbis_info* ovf_info;
-    i64 numstreams;
-    i32 res;
+    long numstreams;
+    int res;
 
     ovFile = (OggVorbis_File*) Z_Malloc(sizeof(OggVorbis_File));
     stream->priv = ovFile;
@@ -83,7 +87,7 @@ static qboolean S_VORBIS_CodecOpenStream(snd_stream_t* stream) {
         goto _fail;
     }
 
-    /* FIXME: handle section changes */
+    // FIXME: handle section changes
     numstreams = ov_streams(ovFile);
     if (numstreams != 1) {
         Con_Printf("More than one (%ld) stream in %s.\n", numstreams,
@@ -110,48 +114,54 @@ _fail:
     return false;
 }
 
-static i32 S_VORBIS_CodecReadStream(snd_stream_t* stream, i32 bytes,
-                                    void* buffer) {
-    i32 section; /* FIXME: handle section changes */
-    i32 cnt, res, rem;
-    char* ptr;
-
-    cnt = 0;
-    rem = bytes;
-    ptr = (char*) buffer;
-
+static i32 S_VORBIS_CodecReadStream(
+    snd_stream_t* stream,
+    i32 bytes,
+    void* buffer
+) {
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
     qboolean host_bigendian = true;
 #else
     qboolean host_bigendian = false;
 #endif
+    i32 cnt = 0;
+    i32 rem = bytes;
+    char* ptr = (char*) buffer;
+    const int word = VORBIS_SAMPLEWIDTH;
+    const int sgned = VORBIS_SIGNED_DATA;
+    i32 res;
 
-    while (1) {
-        /* # ov_read() from libvorbisfile returns the decoded PCM audio
-	 *   in requested endianness, signedness and word size.
-	 * # ov_read() from Tremor (libvorbisidec) returns decoded audio
-	 *   always in host-endian, signed 16 bit PCM format.
-	 * # For both of the libraries, if the audio is multichannel,
-	 *   the channels are interleaved in the output buffer.
-	 */
-        res = ov_read((OggVorbis_File*) stream->priv, ptr, rem, host_bigendian,
-                      VORBIS_SAMPLEWIDTH, VORBIS_SIGNED_DATA, &section);
-        if (res <= 0)
+    while (true) {
+        // # ov_read() from libvorbisfile returns the decoded
+        //   PCM audio in requested endianness, signedness and
+        //   word size.
+        // # ov_read() from Tremor (libvorbisidec) returns
+        //   decoded audio always in host-endian, signed 16 bit
+        //   PCM format.
+        // # For both of the libraries, if the audio is
+        //   multichannel, the channels are interleaved in
+        //   the output buffer.
+        int section; // FIXME: handle section changes
+        res = ov_read(stream->priv, ptr, rem, host_bigendian, word, sgned, &section);
+        if (res <= 0) {
             break;
+        }
         rem -= res;
         cnt += res;
-        if (rem <= 0)
+        if (rem <= 0) {
             break;
+        }
         ptr += res;
     }
 
-    if (res < 0)
+    if (res < 0) {
         return res;
+    }
     return cnt;
 }
 
 static void S_VORBIS_CodecCloseStream(snd_stream_t* stream) {
-    ov_clear((OggVorbis_File*) stream->priv);
+    ov_clear(stream->priv);
     Z_Free(stream->priv);
     S_CodecUtilClose(&stream);
 }
@@ -162,19 +172,19 @@ static i32 S_VORBIS_CodecRewindStream(snd_stream_t* stream) {
      * is seconds as doubles, whereas for Tremor libvorbisidec
      * it is milliseconds as 64 bit integers.
      */
-    return ov_time_seek((OggVorbis_File*) stream->priv, 0);
+    return ov_time_seek(stream->priv, 0);
 }
 
 snd_codec_t vorbis_codec = {
-    CODECTYPE_VORBIS,
-    true, /* always available. */
-    "ogg",
-    S_VORBIS_CodecInitialize,
-    S_VORBIS_CodecShutdown,
-    S_VORBIS_CodecOpenStream,
-    S_VORBIS_CodecReadStream,
-    S_VORBIS_CodecRewindStream,
-    NULL, /* jump */
-    S_VORBIS_CodecCloseStream,
-    NULL
+    .type = CODECTYPE_VORBIS,
+    .initialized = true, // always available.
+    .ext = "ogg",
+    .initialize = S_VORBIS_CodecInitialize,
+    .shutdown = S_VORBIS_CodecShutdown,
+    .codec_open = S_VORBIS_CodecOpenStream,
+    .codec_read = S_VORBIS_CodecReadStream,
+    .codec_rewind = S_VORBIS_CodecRewindStream,
+    .codec_jump = NULL,
+    .codec_close = S_VORBIS_CodecCloseStream,
+    .next = NULL,
 };

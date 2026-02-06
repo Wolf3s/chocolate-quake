@@ -26,7 +26,6 @@
 #define NUM_WINDOWED_MODES   3
 #define NUM_FULLSCREEN_MODES 12
 #define NUM_MODES            (NUM_WINDOWED_MODES + NUM_FULLSCREEN_MODES)
-
 #define DEFAULT_TEST_TIME 5
 
 typedef enum {
