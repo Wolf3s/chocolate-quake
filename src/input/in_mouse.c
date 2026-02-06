@@ -140,8 +140,8 @@ static qboolean IN_StrafeActive(void) {
 }
 
 static void IN_GetMouseMove(float* x, float* y) {
-    i32 mx;
-    i32 my;
+    int mx;
+    int my;
     SDL_GetRelativeMouseState(&mx, &my);
     *x = (float) mx * sensitivity.value;
     *y = (float) my * sensitivity.value;

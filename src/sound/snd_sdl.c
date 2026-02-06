@@ -27,7 +27,7 @@
 static i32 buffersize;
 
 
-static void SDLCALL paint_audio(void* unused, u8* stream, i32 len) {
+static void SDLCALL paint_audio(void* unused, u8* stream, int len) {
     if (!shm) {
         // Shouldn't happen, but just in case.
         Q_memset(stream, 0, len);
@@ -40,8 +40,8 @@ static void SDLCALL paint_audio(void* unused, u8* stream, i32 len) {
         pos = 0;
     }
     i32 tobufend = buffersize - pos; // bytes to buffer's end.
-    i32 len1 = len;
-    i32 len2 = 0;
+    int len1 = len;
+    int len2 = 0;
     if (len1 > tobufend) {
         len1 = tobufend;
         len2 = len - len1;
