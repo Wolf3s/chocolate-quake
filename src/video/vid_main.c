@@ -45,6 +45,10 @@ void VID_Init(const byte* palette) {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         Sys_Error("Failed to initialize video: %s", SDL_GetError());
     }
+#ifdef __PS2__
+	SDL_SetHint(SDL_HINT_PS2_GS_WIDTH, "640");
+	SDL_SetHint(SDL_HINT_PS2_GS_HEIGHT, "480");   
+#endif
     VID_InitWindow();
     VID_InitModes();
     VID_SetPalette(palette);
