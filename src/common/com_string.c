@@ -23,6 +23,7 @@
 #include "quakedef.h"
 #include "net.h"
 
+
 void* Q_memmove(void* dest, const void* src, size_t count) {
     return SDL_memmove(dest, src, count);
 }
