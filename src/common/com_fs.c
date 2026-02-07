@@ -52,7 +52,12 @@
 #include "sys.h"
 #include "zone.h"
 #include <string.h>
-
+#ifdef __PS2__
+#include "cmd.h"
+#include "host.h"
+#include "client.h"
+#include <dirent.h>
+#endif
 
 // if a packfile directory differs from this, it is assumed to be hacked
 #define PAK0_COUNT 339
@@ -614,7 +619,11 @@ INITIALIZATION
 ================================================================================
 */
 
+#ifdef __PS2__
+char* COM_GetBaseDir(void) {
+#else
 static char* COM_GetBaseDir(void) {
+#endif
     static char basedir[MAX_OSPATH] = {0};
     if (basedir[0]) {
         return basedir;
@@ -644,7 +653,11 @@ Sets com_gamedir, adds the directory to the head of the path,
 then loads and adds pak1.pak, pak2.pak, ...
 ================
 */
+#ifdef __PS2__
+void COM_AddGameDirectory(char* dir) {
+#else
 static void COM_AddGameDirectory(char* dir) {
+#endif
     char pakfile[MAX_OSPATH];
 
     Q_strcpy(com_gamedir, dir);
@@ -743,6 +756,37 @@ static void COM_UseCustomPaths(i32 arg_num) {
     }
 }
 
+#ifdef __PS2__
+static void COM_Game_f(void)
+{
+    if(Cmd_Argc() > 1)
+    {
+        char *mod = Cmd_Argv(1); // Argument to load the mod
+
+		if (!registered.value) //disable shareware quake
+		{
+			Con_Printf("You must have the registered version to use modified games\n");
+			return;
+		}
+		//Kill the server
+		CL_Disconnect ();
+		Host_ShutdownServer(true);        
+        com_modified = true;
+    	hipnotic = false;
+		rogue = false;
+		standard_quake = true;
+
+        Cache_Flush();
+
+        COM_AddGameDirectory(va("%s/id1", COM_GetBaseDir()));
+        COM_AddGameDirectory(va("%s/mods/%s", COM_GetBaseDir(), mod));
+
+        Cbuf_AddText("exec quake.rc\n");    
+    }
+}
+#endif
+
+
 /*
 ================
 COM_InitFilesystem
@@ -751,6 +795,13 @@ COM_InitFilesystem
 void COM_InitFilesystem(void) {
     COM_AddGameDirs();
     COM_SetCacheDir();
+#ifdef __PS2__
+    Cmd_AddCommand("game", COM_Game_f);
+    if(mkdir(va("%s/mods", SDL_GetBasePath()), 0777) == -1)
+    {
+        Con_Printf("Failed to create a directory");
+    }
+#endif
 
     //
     // -path <dir or packfile> [<dir or packfile>] ...

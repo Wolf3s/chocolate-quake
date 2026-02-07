@@ -1444,7 +1444,7 @@ void M_Keys_Key(i32 k) {
 
 #ifdef __PS2__
 //=============================================================================
-/* VIDEO MENU */
+/* MOD MENU */
 
 #include <sys/stat.h>
 #include <dirent.h>
@@ -1470,7 +1470,7 @@ static void ScanMods()
     struct stat st;
     char path[256];
     char modpath[256];
-    char *baseDir = SDL_GetBasePath();
+    char *baseDir = COM_GetBaseDir();
 
     snprintf(path, sizeof(path), "%s/mods", baseDir);
 
@@ -1497,18 +1497,16 @@ static void ScanMods()
             strcpy(mod_list[mod_count], modDirent->d_name);
             mod_count++;
         }
-
     }
+
+    closedir(modDir);
 }
 
 void M_Menu_ModMenu_f(void) {
-    char *baseDir = SDL_GetBasePath();
     key_dest = key_menu;
     m_state = m_modmenu;
     m_entersound = true;
-    mkdir(va("%s/mods", baseDir), 0777);
     ScanMods();  
-    SDL_free(baseDir);
 }
 
 void M_ModMenu_Draw(void) {
@@ -1546,12 +1544,11 @@ void M_ModMenu_Key(i32 key)
 
     case K_ENTER:
     case K_ABUTTON:
-        Cbuf_AddText(va("game mods/%s\n", mod_list[mod_cursor]));
+        Cbuf_AddText(va("game %s\n", mod_list[mod_cursor]));
         break;
 
     case K_ESCAPE:
     case K_BBUTTON:
-        Mods_Clear();   
         M_Menu_Main_f();
         break;
     }

@@ -155,7 +155,10 @@ byte* COM_LoadHunkFile(char* path);
 void COM_LoadCacheFile(char* path, struct cache_user_s* cu);
 
 void COM_InitFilesystem(void);
-
+#ifdef __PS2__
+char* COM_GetBaseDir(void);
+void COM_AddGameDirectory(char* dir);
+#endif
 //==============================================================================
 
 
