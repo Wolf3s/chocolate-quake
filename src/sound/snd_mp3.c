@@ -89,7 +89,7 @@ static i32 MP3_InputData(snd_stream_t* stream) {
 
 static i32 MP3_StartRead(snd_stream_t* stream) {
     mp3_priv_t* p = stream->priv;
-    size_t ReadSize;
+    size_t read_size;
 
     mad_stream_init(&p->stream);
     mad_frame_init(&p->frame);
@@ -98,12 +98,12 @@ static i32 MP3_StartRead(snd_stream_t* stream) {
 
     // Decode at least one valid frame to find out the input format.
     // The decoded frame will be saved off so that it can be processed later.
-    ReadSize = Q_fread(p->mp3_buffer, 1, MP3_BUFFER_SIZE, &stream->fh);
-    if (!ReadSize || Q_ferror(&stream->fh)) {
+    read_size = Q_fread(p->mp3_buffer, 1, MP3_BUFFER_SIZE, &stream->fh);
+    if (!read_size || Q_ferror(&stream->fh)) {
         return -1;
     }
 
-    mad_stream_buffer(&p->stream, p->mp3_buffer, ReadSize);
+    mad_stream_buffer(&p->stream, p->mp3_buffer, (unsigned long) read_size);
 
     // Find a valid frame before starting up.
     // This makes sure that we have a valid MP3.
@@ -145,7 +145,7 @@ static i32 MP3_StartRead(snd_stream_t* stream) {
 
     mad_timer_add(&p->timer, p->frame.header.duration);
     mad_synth_frame(&p->synth, &p->frame);
-    stream->info.rate = p->synth.pcm.samplerate;
+    stream->info.rate = (i32) p->synth.pcm.samplerate;
     stream->info.bits = MP3_MAD_SAMPLEBITS;
     stream->info.width = MP3_MAD_SAMPLEWIDTH;
 
@@ -154,12 +154,14 @@ static i32 MP3_StartRead(snd_stream_t* stream) {
     return 0;
 }
 
-// Read up to len samples from p->Synth
+// Read up to len samples from p->synth
 // If needed, read some more MP3 data, decode them and synth them Place in buf[].
 // Return number of samples read.
 static i32 MP3_Decode(snd_stream_t* stream, byte* buf, i32 len) {
     mp3_priv_t* p = stream->priv;
-    i32 donow, i, done = 0;
+    i32 donow;
+    i32 i;
+    i32 done = 0;
     mad_fixed_t sample;
     i32 chan, x;
 
@@ -225,18 +227,18 @@ static i32 MP3_Decode(snd_stream_t* stream, byte* buf, i32 len) {
 
 static void MP3_StopRead(snd_stream_t* stream) {
     mp3_priv_t* p = stream->priv;
-    mad_synth_finish(&p->Synth);
+    mad_synth_finish(&p->synth);
     mad_frame_finish(&p->frame);
     mad_stream_finish(&p->stream);
 }
 
-static i32 MP3_MadSeek(snd_stream_t* stream, u64 offset) {
+static i32 MP3_MadSeek(snd_stream_t* stream, unsigned long offset) {
     mp3_priv_t* p = stream->priv;
     size_t initial_bitrate = p->frame.header.bitrate;
     size_t consumed = 0;
     i32 vbr = 0; // Variable Bit Rate
     qboolean depadded = false;
-    u64 to_skip_samples = 0;
+    unsigned long to_skip_samples = 0;
 
     // Reset all.
     Q_rewind(&stream->fh);
@@ -244,7 +246,7 @@ static i32 MP3_MadSeek(snd_stream_t* stream, u64 offset) {
     p->frame_count = 0;
 
     // They were opened in StartRead
-    mad_synth_finish(&p->Synth);
+    mad_synth_finish(&p->synth);
     mad_frame_finish(&p->frame);
     mad_stream_finish(&p->stream);
 
@@ -256,30 +258,27 @@ static i32 MP3_MadSeek(snd_stream_t* stream, u64 offset) {
     to_skip_samples = offset;
 
     // Read data from the MP3 file.
-    while (1)
-    {
-        i32 bytes_read, padding = 0;
+    while (true) {
         size_t leftover = p->stream.bufend - p->stream.next_frame;
 
         Q_memcpy(p->mp3_buffer, p->stream.this_frame, leftover);
-        bytes_read = Q_fread(p->mp3_buffer + leftover, (size_t) 1,
-                              MP3_BUFFER_SIZE - leftover, &stream->fh);
+        i32 bytes_read = (i32) Q_fread(p->mp3_buffer + leftover, 1,
+                                       MP3_BUFFER_SIZE - leftover, &stream->fh);
         if (bytes_read <= 0) {
             Con_DPrintf(
                 "seek failure. unexpected EOF (frames=%lu leftover=%lu)\n",
                 (unsigned long) p->frame_count, (unsigned long) leftover);
             break;
         }
-        for (; !depadded && padding < bytes_read && !p->mp3_buffer[padding];
-             ++padding)
-            ;
+        i32 padding = 0;
+        while (!depadded && padding < bytes_read && !p->mp3_buffer[padding]) {
+            padding++;
+        }
         depadded = true;
-        mad_stream_buffer(&p->stream, p->mp3_buffer + padding,
-                          leftover + bytes_read - padding);
+        mad_stream_buffer(&p->stream, p->mp3_buffer + padding, leftover + bytes_read - padding);
 
         // Decode frame headers.
-        while (1)
-        {
+        while (true) {
             static u16 samples;
             p->stream.error = MAD_ERROR_NONE;
 
@@ -321,7 +320,7 @@ static i32 MP3_MadSeek(snd_stream_t* stream, u64 offset) {
             if (p->frame_count == 64 && !vbr) {
                 p->frame_count = offset / samples;
                 to_skip_samples = offset % samples;
-                if (0 != Q_fseek(&stream->fh, (p->frame_count * consumed / 64), SEEK_SET)) {
+                if (Q_fseek(&stream->fh, (p->frame_count * consumed / 64), SEEK_SET)) {
                     return -1;
                 }
 
@@ -399,5 +398,5 @@ snd_codec_t mp3_codec = {
     .codec_rewind = S_MP3_CodecRewindStream,
     .codec_jump = NULL,
     .codec_close = S_MP3_CodecCloseStream,
-    .next = NULL
+    .next = NULL,
 };

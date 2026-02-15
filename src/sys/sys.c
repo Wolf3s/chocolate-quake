@@ -121,11 +121,11 @@ void Sys_FileSeek(i32 handle, i32 position) {
     fseek(sys_handles[handle], position, SEEK_SET);
 }
 
-i32 Sys_FileRead(i32 handle, void* dest, i32 count) {
+size_t Sys_FileRead(i32 handle, void* dest, i32 count) {
     return fread(dest, 1, count, sys_handles[handle]);
 }
 
-i32 Sys_FileWrite(i32 handle, void* data, i32 count) {
+size_t Sys_FileWrite(i32 handle, void* data, i32 count) {
     return fwrite(data, 1, count, sys_handles[handle]);
 }
 
@@ -267,21 +267,21 @@ SIGNAL HANDLING
 */
 
 #ifdef HAVE_SIGNAL_H
-static void Sys_SigHandler(i32 sig) {
+static void Sys_SigHandler(int sig) {
     CL_Disconnect();
     Host_ShutdownServer(false);
     Sys_Quit();
 }
 
 #ifdef HAVE_SIGACTION
-static void Sys_SigHook(i32 sig) {
+static void Sys_SigHook(int sig) {
     struct sigaction action;
     sigaction(sig, NULL, &action);
     action.sa_handler = Sys_SigHandler;
     sigaction(sig, &action, NULL);
 }
 #else
-static void Sys_SigHook(i32 sig) {
+static void Sys_SigHook(int sig) {
     signal(sig, Sys_SigHandler);
 }
 #endif

@@ -168,7 +168,7 @@ S_WAV_CodecOpenStream
 =================
 */
 static qboolean S_WAV_CodecOpenStream(snd_stream_t* stream) {
-    const i64 start = stream->fh.start;
+    const long start = stream->fh.start;
 
     // Read the RIFF header
     // The file reads are sequential, therefore no need for
@@ -241,5 +241,5 @@ snd_codec_t wav_codec = {
     .codec_rewind = S_WAV_CodecRewindStream,
     .codec_jump = NULL,
     .codec_close = S_WAV_CodecCloseStream,
-    .next = NULL
+    .next = NULL,
 };

@@ -542,21 +542,23 @@ static void S_StopAllSoundsC(void) {
 }
 
 void S_ClearBuffer(void) {
-    i32 clear;
-
-    if (!sound_started || !shm)
+    if (!sound_started || !shm) {
         return;
+    }
 
     SNDDMA_LockBuffer();
-    if (!shm->buffer)
+    if (!shm->buffer) {
         return;
+    }
 
     s_rawend = 0;
 
-    if (shm->samplebits == 8 && !shm->signed8)
+    int clear;
+    if (shm->samplebits == 8 && !shm->signed8) {
         clear = 0x80;
-    else
+    } else {
         clear = 0;
+    }
 
     Q_memset(shm->buffer, clear, shm->samples * shm->samplebits / 8);
 

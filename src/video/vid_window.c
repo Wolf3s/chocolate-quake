@@ -65,10 +65,10 @@ static void VID_CreateRenderer(void) {
 }
 
 static void VID_CreateWindow(void) {
-    i32 x = SDL_WINDOWPOS_CENTERED;
-    i32 y = SDL_WINDOWPOS_CENTERED;
-    i32 w = 0;
-    i32 h = 0;
+    int x = SDL_WINDOWPOS_CENTERED;
+    int y = SDL_WINDOWPOS_CENTERED;
+    int w = 0;
+    int h = 0;
     u32 flags = SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_FULLSCREEN_DESKTOP;
     window = SDL_CreateWindow(PACKAGE_STRING, x, y, w, h, flags);
     if (window == NULL) {
@@ -116,8 +116,8 @@ MOUSE HANDLING
 */
 
 static void VID_CenterMouse(void) {
-    i32 x = (i32) vid.width / 2;
-    i32 y = (i32) vid.height / 2;
+    int x = (int) vid.width / 2;
+    int y = (i32) vid.height / 2;
     SDL_WarpMouseInWindow(window, x, y);
 }
 
@@ -158,10 +158,10 @@ VIDEO MODE CHANGE
 */
 
 static void VID_SetWindowed(void) {
-    i32 w = (i32) vid.width;
-    i32 h = (i32) vid.height;
-    i32 x = SDL_WINDOWPOS_CENTERED;
-    i32 y = SDL_WINDOWPOS_CENTERED;
+    int w = (int) vid.width;
+    int h = (int) vid.height;
+    int x = SDL_WINDOWPOS_CENTERED;
+    int y = SDL_WINDOWPOS_CENTERED;
     SDL_SetWindowFullscreen(window, 0);
     SDL_SetWindowSize(window, w, h);
     SDL_SetWindowPosition(window, x, y);
@@ -181,9 +181,9 @@ static void VID_SetFullscreen(void) {
 // Create the intermediate texture that the RGBA surface gets loaded into.
 //
 static void VID_AllocTexture(void) {
-    i32 access = SDL_TEXTUREACCESS_STREAMING;
-    i32 w = (i32) vid.width;
-    i32 h = (i32) vid.height;
+    int access = SDL_TEXTUREACCESS_STREAMING;
+    int w = (int) vid.width;
+    int h = (int) vid.height;
     texture = SDL_CreateTexture(renderer, pixel_format, access, w, h);
 }
 

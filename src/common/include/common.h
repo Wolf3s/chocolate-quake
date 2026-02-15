@@ -271,18 +271,18 @@ STDIO REPLACEMENT FUNCTIONS
 
 typedef struct {
     FILE* file;
-    i64 start;  // file or data start position
-    i64 length; // file or data size
-    i64 pos;    // current position relative to start
+    long start;  // file or data start position
+    long length; // file or data size
+    long pos;    // current position relative to start
 } fshandle_t;
 
 size_t Q_fread(void* ptr, size_t size, size_t nmemb, fshandle_t* fh);
-i32 Q_fseek(fshandle_t* fh, i64 offset, i32 whence);
-i64 Q_ftell(const fshandle_t* fh);
+int Q_fseek(fshandle_t* fh, long offset, int whence);
+long Q_ftell(const fshandle_t* fh);
 void Q_rewind(fshandle_t* fh);
-i64 Q_filelength(const fshandle_t* fh);
-i32 Q_feof(const fshandle_t *fh);
-i32 Q_ferror(fshandle_t* fh);
+long Q_filelength(const fshandle_t* fh);
+int Q_feof(const fshandle_t *fh);
+int Q_ferror(fshandle_t* fh);
 
 //==============================================================================
 
@@ -300,7 +300,7 @@ STANDARD LIB REPLACEMENT FUNCTIONS
 void* Q_malloc(size_t size);
 void* Q_calloc(size_t num, size_t size);
 void Q_free(void* ptr);
-i64 Q_strtol(const char* str, char** str_end, i32 base);
+long Q_strtol(const char* str, char** str_end, int base);
 i32 Q_atoi(const char* str);
 float Q_atof(const char* str);
 
@@ -313,19 +313,19 @@ STRING LIB REPLACEMENT FUNCTIONS
 */
 
 void* Q_memmove(void* dest, const void* src, size_t count);
-void Q_memset(void* dest, i32 fill, size_t count);
-void Q_memcpy(void* dest, void* src, size_t count);
-i32 Q_memcmp(void* m1, void* m2, size_t count);
+void Q_memset(void* dest, int fill, size_t count);
+void Q_memcpy(void* dest, const void* src, size_t count);
+int Q_memcmp(const void* m1, const void* m2, size_t count);
 void Q_strcpy(char* dest, const char* src);
 void Q_strncpy(char* dest, const char* src, size_t count);
 size_t Q_strlen(const char* str);
 char* Q_strrchr(const char* s, char c);
 void Q_strcat(char* dest, const char* src);
-i32 Q_strcmp(const char* s1, const char* s2);
-i32 Q_strncmp(const char* s1, const char* s2, size_t count);
-i32 Q_strcasecmp(const char* s1, const char* s2);
-i32 Q_strncasecmp(const char* s1, const char* s2, size_t n);
-char* Q_strchr(const char* str, i32 c);
+int Q_strcmp(const char* s1, const char* s2);
+int Q_strncmp(const char* s1, const char* s2, size_t count);
+int Q_strcasecmp(const char* s1, const char* s2);
+int Q_strncasecmp(const char* s1, const char* s2, size_t n);
+char* Q_strchr(const char* str, int c);
 char* Q_strstr(const char* str, const char* substr);
 
 //==============================================================================

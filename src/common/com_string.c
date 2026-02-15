@@ -28,15 +28,15 @@ void* Q_memmove(void* dest, const void* src, size_t count) {
     return SDL_memmove(dest, src, count);
 }
 
-void Q_memset(void* dest, i32 fill, size_t count) {
+void Q_memset(void* dest, int fill, size_t count) {
     SDL_memset(dest, fill, count);
 }
 
-void Q_memcpy(void* dest, void* src, size_t count) {
+void Q_memcpy(void* dest, const void* src, size_t count) {
     SDL_memcpy(dest, src, count);
 }
 
-i32 Q_memcmp(void* m1, void* m2, size_t count) {
+int Q_memcmp(const void* m1, const void* m2, size_t count) {
     return SDL_memcmp(m1, m2, count);
 }
 
@@ -83,23 +83,23 @@ void Q_strcat(char* dest, const char* src) {
 
 }
 
-i32 Q_strcmp(const char* s1, const char* s2) {
+int Q_strcmp(const char* s1, const char* s2) {
     return SDL_strcmp(s1, s2);
 }
 
-i32 Q_strncmp(const char* s1, const char* s2, size_t count) {
+int Q_strncmp(const char* s1, const char* s2, size_t count) {
     return SDL_strncmp(s1, s2, count);
 }
 
-i32 Q_strncasecmp(const char* s1, const char* s2, size_t n) {
+int Q_strncasecmp(const char* s1, const char* s2, size_t n) {
     return SDL_strncasecmp(s1, s2, n);
 }
 
-i32 Q_strcasecmp(const char* s1, const char* s2) {
+int Q_strcasecmp(const char* s1, const char* s2) {
     return Q_strncasecmp(s1, s2, 99999);
 }
 
-char* Q_strchr(const char* str, i32 c) {
+char* Q_strchr(const char* str, int c) {
     return SDL_strchr(str, c);
 }
 
