@@ -1,12 +1,14 @@
-add_library(host STATIC
-    host.c
-    host_cmd.c
+set(LIB host)
+
+add_library(${LIB} STATIC
+    src/host.c
+    src/host_cmd.c
 )
 
-target_include_directories(host PRIVATE ${CMAKE_BINARY_DIR} "../")
-target_include_directories(host PUBLIC "./include")
-target_link_libraries(host PUBLIC common console)
-target_link_libraries(host PRIVATE
+target_include_directories(${LIB} PRIVATE ${CMAKE_BINARY_DIR} "../")
+target_include_directories(${LIB} PUBLIC "./include")
+target_link_libraries(${LIB} PUBLIC common console)
+target_link_libraries(${LIB} PRIVATE
     ${SDL2_LIBRARIES}
     camera
     client

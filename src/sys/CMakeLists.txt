@@ -1,9 +1,11 @@
-add_library(sys STATIC sys.c)
+set(LIB sys)
 
-target_include_directories(sys PRIVATE ${CMAKE_BINARY_DIR} "../")
-target_include_directories(sys PUBLIC "./include")
-target_link_libraries(sys PUBLIC common host)
-target_link_libraries(sys PRIVATE
+add_library(${LIB} STATIC src/sys.c)
+
+target_include_directories(${LIB} PRIVATE ${CMAKE_BINARY_DIR} "../")
+target_include_directories(${LIB} PUBLIC "./include")
+target_link_libraries(${LIB} PUBLIC common host)
+target_link_libraries(${LIB} PRIVATE
     ${SDL2_LIBRARIES}
     client
     cmd

@@ -1,39 +1,41 @@
-add_library(renderer STATIC
-    adivtab.h
-    anorms.h
-    d_edge.c
-    d_fill.c
-    d_init.c
-    d_modech.c
-    d_part.c
-    d_polyse.c
-    d_scan.c
-    d_sky.c
-    d_sprite.c
-    d_surf.c
-    d_vars.c
-    d_zpoint.c
-    draw.c
-    nonintel.c
-    r_aclip.c
-    r_alias.c
-    r_bsp.c
-    r_draw.c
-    r_edge.c
-    r_efrag.c
-    r_light.c
-    r_main.c
-    r_misc.c
-    r_part.c
-    r_sky.c
-    r_sprite.c
-    r_surf.c
-    r_vars.c
+set(LIB renderer)
+
+add_library(${LIB} STATIC
+    src/adivtab.h
+    src/anorms.h
+    src/d_edge.c
+    src/d_fill.c
+    src/d_init.c
+    src/d_modech.c
+    src/d_part.c
+    src/d_polyse.c
+    src/d_scan.c
+    src/d_sky.c
+    src/d_sprite.c
+    src/d_surf.c
+    src/d_vars.c
+    src/d_zpoint.c
+    src/draw.c
+    src/nonintel.c
+    src/r_aclip.c
+    src/r_alias.c
+    src/r_bsp.c
+    src/r_draw.c
+    src/r_edge.c
+    src/r_efrag.c
+    src/r_light.c
+    src/r_main.c
+    src/r_misc.c
+    src/r_part.c
+    src/r_sky.c
+    src/r_sprite.c
+    src/r_surf.c
+    src/r_vars.c
 )
 
-target_include_directories(renderer PRIVATE ${CMAKE_BINARY_DIR} "../")
-target_include_directories(renderer PUBLIC "./include")
-target_link_libraries(renderer PUBLIC
+target_include_directories(${LIB} PRIVATE ${CMAKE_BINARY_DIR} "../")
+target_include_directories(${LIB} PUBLIC "./include")
+target_link_libraries(${LIB} PUBLIC
     client
     common
     console
@@ -43,7 +45,7 @@ target_link_libraries(renderer PUBLIC
     video
     wad
 )
-target_link_libraries(renderer PRIVATE
+target_link_libraries(${LIB} PRIVATE
     camera
     cmd
     memory

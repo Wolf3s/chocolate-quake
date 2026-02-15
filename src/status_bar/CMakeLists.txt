@@ -1,9 +1,11 @@
-add_library(status_bar STATIC sbar.c)
+set(LIB status_bar)
 
-target_include_directories(status_bar PRIVATE ${CMAKE_BINARY_DIR} "../")
-target_include_directories(status_bar PUBLIC "./include")
-target_link_libraries(status_bar PUBLIC common)
-target_link_libraries(status_bar PRIVATE
+add_library(${LIB} STATIC src/sbar.c)
+
+target_include_directories(${LIB} PRIVATE ${CMAKE_BINARY_DIR} "../")
+target_include_directories(${LIB} PUBLIC "./include")
+target_link_libraries(${LIB} PUBLIC common)
+target_link_libraries(${LIB} PRIVATE
     client
     cmd
     renderer
