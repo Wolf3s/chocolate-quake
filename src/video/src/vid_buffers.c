@@ -110,10 +110,10 @@ static void VID_AllocZBuffer() {
 //
 static void VID_AllocRgbaBuffer(void) {
     void* pixels = NULL;
-    i32 w = (i32) vid.width;
-    i32 h = (i32) vid.height;
-    i32 depth = 0;
-    i32 pitch = 0;
+    int w = (int) vid.width;
+    int h = (int) vid.height;
+    int depth = 0;
+    int pitch = 0;
     argb_buffer = SDL_CreateRGBSurfaceWithFormatFrom(
         pixels, w, h, depth, pitch, pixel_format
     );
@@ -124,9 +124,9 @@ static void VID_AllocRgbaBuffer(void) {
 //
 static void VID_AllocScreenBuffer(void) {
     u32 flags = 0;
-    i32 w = (i32) vid.width;
-    i32 h = (i32) vid.height;
-    i32 depth = 8;
+    int w = (int) vid.width;
+    int h = (int) vid.height;
+    int depth = 8;
     u32 r_mask = 0;
     u32 g_mask = 0;
     u32 b_mask = 0;

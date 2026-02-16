@@ -1,9 +1,11 @@
-add_library(memory STATIC zone.c)
+set(LIB memory)
 
-target_include_directories(memory PRIVATE ${CMAKE_BINARY_DIR} "../")
-target_include_directories(memory PUBLIC "./include")
-target_link_libraries(memory PUBLIC common)
-target_link_libraries(memory PRIVATE
+add_library(${LIB} STATIC src/zone.c)
+
+target_include_directories(${LIB} PRIVATE ${CMAKE_BINARY_DIR} "../")
+target_include_directories(${LIB} PUBLIC "./include")
+target_link_libraries(${LIB} PUBLIC common)
+target_link_libraries(${LIB} PRIVATE
     ${SDL2_LIBRARIES}
     cmd
     console

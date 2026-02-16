@@ -1,9 +1,11 @@
-add_library(menu STATIC menu.c)
+set(LIB menu)
 
-target_include_directories(menu PRIVATE ${CMAKE_BINARY_DIR} "../")
-target_include_directories(menu PUBLIC "./include")
-target_link_libraries(menu PUBLIC common)
-target_link_libraries(menu PRIVATE
+add_library(${LIB} STATIC src/menu.c)
+
+target_include_directories(${LIB} PRIVATE ${CMAKE_BINARY_DIR} "../")
+target_include_directories(${LIB} PUBLIC "./include")
+target_link_libraries(${LIB} PUBLIC common)
+target_link_libraries(${LIB} PRIVATE
     ${SDL2_LIBRARIES}
     camera
     client

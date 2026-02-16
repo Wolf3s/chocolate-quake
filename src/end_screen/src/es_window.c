@@ -51,10 +51,10 @@ static qboolean ES_CreateRenderer(void) {
 
 static qboolean ES_CreateWindow(void) {
     const font_t* font = ES_GetCurrentFont();
-    const i32 w = TEXT_SCREEN_WIDTH * font->w;
-    const i32 h = TEXT_SCREEN_HEIGHT * font->h;
-    const i32 x = SDL_WINDOWPOS_CENTERED;
-    const i32 y = SDL_WINDOWPOS_CENTERED;
+    const int w = TEXT_SCREEN_WIDTH * font->w;
+    const int h = TEXT_SCREEN_HEIGHT * font->h;
+    const int x = SDL_WINDOWPOS_CENTERED;
+    const int y = SDL_WINDOWPOS_CENTERED;
     const char* title = PACKAGE_STRING;
     const u32 flags = (ES_IsHighDPIFont() ? SDL_WINDOW_ALLOW_HIGHDPI : 0);
     window = SDL_CreateWindow(title, x, y, w, h, flags);

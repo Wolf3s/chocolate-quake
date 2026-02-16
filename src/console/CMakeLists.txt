@@ -1,12 +1,14 @@
-add_library(console STATIC
-    console.c
-    cvar.c
+set(LIB console)
+
+add_library(${LIB} STATIC
+    src/console.c
+    src/cvar.c
 )
 
-target_include_directories(console PRIVATE ${CMAKE_BINARY_DIR} "../")
-target_include_directories(console PUBLIC "./include")
-target_link_libraries(console PUBLIC common)
-target_link_libraries(console PRIVATE
+target_include_directories(${LIB} PRIVATE ${CMAKE_BINARY_DIR} "../")
+target_include_directories(${LIB} PUBLIC "./include")
+target_link_libraries(${LIB} PUBLIC common)
+target_link_libraries(${LIB} PRIVATE
     client
     cmd
     input

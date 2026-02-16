@@ -1,19 +1,21 @@
-add_library(video STATIC
-    vid_buffers.c
-    vid_buffers.h
-    vid_main.c
-    vid_menu.c
-    vid_menu.h
-    vid_modes.c
-    vid_modes.h
-    vid_window.c
-    vid_window.h
+set(LIB video)
+
+add_library(${LIB} STATIC
+    src/vid_buffers.c
+    src/vid_buffers.h
+    src/vid_main.c
+    src/vid_menu.c
+    src/vid_menu.h
+    src/vid_modes.c
+    src/vid_modes.h
+    src/vid_window.c
+    src/vid_window.h
 )
 
-target_include_directories(video PRIVATE ${CMAKE_BINARY_DIR} "../")
-target_include_directories(video PUBLIC "./include")
-target_link_libraries(video PUBLIC common)
-target_link_libraries(video PRIVATE
+target_include_directories(${LIB} PRIVATE ${CMAKE_BINARY_DIR} "../")
+target_include_directories(${LIB} PUBLIC "./include")
+target_link_libraries(${LIB} PUBLIC common)
+target_link_libraries(${LIB} PRIVATE
     ${SDL2_LIBRARIES}
     cmd
     console

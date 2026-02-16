@@ -100,10 +100,10 @@ static qboolean ES_ReadScreenData(void) {
 }
 
 static qboolean ES_CreateScreenBuffer(void) {
-    const i32 w = buffer_width;
-    const i32 h = buffer_height;
+    const int w = buffer_width;
+    const int h = buffer_height;
     const u32 flags = 0;
-    const i32 depth = 8;
+    const int depth = 8;
     const u32 r = 0;
     const u32 g = 0;
     const u32 b = 0;
@@ -117,10 +117,10 @@ static qboolean ES_CreateScreenBuffer(void) {
 }
 
 static SDL_bool ES_CreateRgbaBuffer(void) {
-    const i32 w = buffer_width;
-    const i32 h = buffer_height;
-    const i32 depth = 0;
-    const i32 pitch = 0;
+    const int w = buffer_width;
+    const int h = buffer_height;
+    const int depth = 0;
+    const int pitch = 0;
     argb_buffer = SDL_CreateRGBSurfaceWithFormatFrom(NULL, w, h, depth, pitch,
                                                      pixel_format);
     if (!argb_buffer) {
@@ -133,9 +133,9 @@ static SDL_bool ES_CreateRgbaBuffer(void) {
 static SDL_bool ES_CreateTexture(SDL_Renderer* renderer) {
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 
-    const i32 w = buffer_width;
-    const i32 h = buffer_height;
-    const i32 access = SDL_TEXTUREACCESS_STREAMING;
+    const int w = buffer_width;
+    const int h = buffer_height;
+    const int access = SDL_TEXTUREACCESS_STREAMING;
     texture = SDL_CreateTexture(renderer, pixel_format, access, w, h);
     return texture != NULL;
 }

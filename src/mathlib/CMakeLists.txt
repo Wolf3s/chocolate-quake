@@ -1,5 +1,7 @@
-add_library(mathlib STATIC mathlib.c)
+set(LIB mathlib)
 
-target_include_directories(mathlib PRIVATE ${CMAKE_BINARY_DIR} "../")
-target_include_directories(mathlib PUBLIC "./include")
-target_link_libraries(mathlib PUBLIC common model)
+add_library(${LIB} STATIC src/mathlib.c)
+
+target_include_directories(${LIB} PRIVATE ${CMAKE_BINARY_DIR} "../")
+target_include_directories(${LIB} PUBLIC "./include")
+target_link_libraries(${LIB} PUBLIC common model)

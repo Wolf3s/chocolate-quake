@@ -1,6 +1,8 @@
-add_library(cmd STATIC cmd.c)
+set(LIB cmd)
 
-target_include_directories(cmd PRIVATE ${CMAKE_BINARY_DIR} "../")
+add_library(${LIB} STATIC src/cmd.c)
+
+target_include_directories(${LIB} PRIVATE ${CMAKE_BINARY_DIR} "../")
 target_include_directories(cmd PUBLIC "./include")
-target_link_libraries(cmd PUBLIC common)
-target_link_libraries(cmd PRIVATE client console host sys memory)
+target_link_libraries(${LIB} PUBLIC common)
+target_link_libraries(${LIB} PRIVATE client console host sys memory)
