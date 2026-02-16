@@ -1,28 +1,30 @@
-add_library(net STATIC
-    net_dgrm.c
-    net_dgrm.h
-    net_drivers.c
-    net_loop.c
-    net_loop.h
-    net_main.c
-    net_poll.c
-    net_poll.h
-    net_socket.c
-    net_socket.h
-    net_udp.c
-    net_udp.h
-    net_vcr.c
-    net_vcr.h
+set(LIB net)
+
+add_library(${LIB} STATIC
+    src/net_dgrm.c
+    src/net_dgrm.h
+    src/net_drivers.c
+    src/net_loop.c
+    src/net_loop.h
+    src/net_main.c
+    src/net_poll.c
+    src/net_poll.h
+    src/net_socket.c
+    src/net_socket.h
+    src/net_udp.c
+    src/net_udp.h
+    src/net_vcr.c
+    src/net_vcr.h
 )
 
-target_include_directories(net PRIVATE ${CMAKE_BINARY_DIR} "../")
-target_include_directories(net PUBLIC "./include")
-target_link_libraries(net PUBLIC
+target_include_directories(${LIB} PRIVATE ${CMAKE_BINARY_DIR} "../")
+target_include_directories(${LIB} PUBLIC "./include")
+target_link_libraries(${LIB} PUBLIC
     $<IF:$<TARGET_EXISTS:SDL2_net::SDL2_net>,SDL2_net::SDL2_net,SDL2_net::SDL2_net-static>
     common
     console
 )
-target_link_libraries(net PRIVATE
+target_link_libraries(${LIB} PRIVATE
     client
     cmd
     host

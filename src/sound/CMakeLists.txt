@@ -1,20 +1,22 @@
-add_library(sound STATIC
-    bgmusic.c
-    snd_codec.c
-    snd_codec.h
-    snd_dma.c
-    snd_flac.c
-    snd_flac.h
-    snd_mem.c
-    snd_mix.c
-    snd_mp3.c
-    snd_mp3.h
-    snd_mp3tag.c
-    snd_sdl.c
-    snd_vorbis.c
-    snd_vorbis.h
-    snd_wave.c
-    snd_wave.h
+set(LIB sound)
+
+add_library(${LIB} STATIC
+    src/bgmusic.c
+    src/snd_codec.c
+    src/snd_codec.h
+    src/snd_dma.c
+    src/snd_flac.c
+    src/snd_flac.h
+    src/snd_mem.c
+    src/snd_mix.c
+    src/snd_mp3.c
+    src/snd_mp3.h
+    src/snd_mp3tag.c
+    src/snd_sdl.c
+    src/snd_vorbis.c
+    src/snd_vorbis.h
+    src/snd_wave.c
+    src/snd_wave.h
 )
 
 set(LIBS ${SDL2_LIBRARIES})
@@ -41,7 +43,7 @@ else()
     )
 endif()
 
-target_include_directories(sound PRIVATE ${CMAKE_BINARY_DIR} "../")
-target_include_directories(sound PUBLIC "./include")
-target_link_libraries(sound PUBLIC common console mathlib memory)
-target_link_libraries(sound PRIVATE ${LIBS} client cmd host model sys)
+target_include_directories(${LIB} PRIVATE ${CMAKE_BINARY_DIR} "../")
+target_include_directories(${LIB} PUBLIC "./include")
+target_link_libraries(${LIB} PUBLIC common console mathlib memory)
+target_link_libraries(${LIB} PRIVATE ${LIBS} client cmd host model sys)

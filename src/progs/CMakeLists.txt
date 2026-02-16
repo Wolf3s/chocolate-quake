@@ -1,13 +1,15 @@
-add_library(progs STATIC
-    pr_cmds.c
-    pr_edict.c
-    pr_exec.c
+set(LIB progs)
+
+add_library(${LIB} STATIC
+    src/pr_cmds.c
+    src/pr_edict.c
+    src/pr_exec.c
 )
 
-target_include_directories(progs PRIVATE ${CMAKE_BINARY_DIR} "../")
-target_include_directories(progs PUBLIC "./include")
-target_link_libraries(progs PUBLIC common mathlib)
-target_link_libraries(progs PRIVATE
+target_include_directories(${LIB} PRIVATE ${CMAKE_BINARY_DIR} "../")
+target_include_directories(${LIB} PUBLIC "./include")
+target_link_libraries(${LIB} PUBLIC common mathlib)
+target_link_libraries(${LIB} PRIVATE
     cmd
     console
     crc

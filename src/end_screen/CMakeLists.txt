@@ -1,21 +1,23 @@
-add_library(end_screen STATIC
-    fonts/large.h
-    fonts/normal.h
-    fonts/small.h
-    es_buffer.c
-    es_buffer.h
-    es_font.c
-    es_font.h
-    es_main.c
-    es_palette.c
-    es_palette.h
-    es_time.c
-    es_time.h
-    es_window.c
-    es_window.h
+set(LIB end_screen)
+
+add_library(${LIB} STATIC
+    src/fonts/large.h
+    src/fonts/normal.h
+    src/fonts/small.h
+    src/es_buffer.c
+    src/es_buffer.h
+    src/es_font.c
+    src/es_font.h
+    src/es_main.c
+    src/es_palette.c
+    src/es_palette.h
+    src/es_time.c
+    src/es_time.h
+    src/es_window.c
+    src/es_window.h
 )
 
-target_include_directories(end_screen PRIVATE ${CMAKE_BINARY_DIR} "../")
-target_include_directories(end_screen PUBLIC "./include")
-target_link_libraries(end_screen PUBLIC common)
-target_link_libraries(end_screen PRIVATE ${SDL2_LIBRARIES} console sys)
+target_include_directories(${LIB} PRIVATE ${CMAKE_BINARY_DIR} "../")
+target_include_directories(${LIB} PUBLIC "./include")
+target_link_libraries(${LIB} PUBLIC common)
+target_link_libraries(${LIB} PRIVATE ${SDL2_LIBRARIES} console sys)

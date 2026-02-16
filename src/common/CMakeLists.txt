@@ -1,23 +1,25 @@
-add_library(common STATIC
-    com_argv.c
-    com_byte.c
-    com_ext.c
-    com_fs.c
-    com_init.c
-    com_link.c
-    com_msg.c
-    com_sizebuf.c
-    com_stdio.c
-    com_stdlib.c
-    com_string.c
-    com_token.c
-    com_va.c
+set(LIB common)
+
+add_library(${LIB} STATIC
+    src/com_argv.c
+    src/com_byte.c
+    src/com_ext.c
+    src/com_fs.c
+    src/com_init.c
+    src/com_link.c
+    src/com_msg.c
+    src/com_sizebuf.c
+    src/com_stdio.c
+    src/com_stdlib.c
+    src/com_string.c
+    src/com_token.c
+    src/com_va.c
 )
 
-target_include_directories(common PRIVATE ${CMAKE_BINARY_DIR} "../")
-target_include_directories(common PUBLIC "./include")
-target_link_libraries(common PUBLIC ${SDL2_LIBRARIES})
-target_link_libraries(common PRIVATE
+target_include_directories(${LIB} PRIVATE ${CMAKE_BINARY_DIR} "../")
+target_include_directories(${LIB} PUBLIC "./include")
+target_link_libraries(${LIB} PUBLIC ${SDL2_LIBRARIES})
+target_link_libraries(${LIB} PRIVATE
     cmd
     console
     crc
